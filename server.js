@@ -5,15 +5,20 @@ const port = process.env.PORT || 2000;
 
 
 const app = express();
-const clientPath = __dirname+'/client';
-console.log("Serving up "+clientPath);
+const clientPath = __dirname+'/client/';
 
-app.use(express.static(clientPath));
+app.set('view-engine', 'ejs');
+
+app.get('/', function(req, res){
+	res.render(clientPath+'index.ejs');
+});
+
+//app.use(express.static(clientPath));
 const server = http.createServer(app);
 const io = socketio(server);
 
 server.listen(port, function() {
-	console.log("Listening on port "+port);
+	console.log("Starting server on port "+port);
 });
 
 server.on('error', err => {
