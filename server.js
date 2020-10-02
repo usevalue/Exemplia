@@ -1,22 +1,23 @@
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
+const port = process.env.PORT || 2000;
 
 
 const app = express();
 const clientPath = __dirname+'/client';
-console.log("Serving from "+clientPath);
+console.log("Serving up "+clientPath);
 
 app.use(express.static(clientPath));
 const server = http.createServer(app);
 const io = socketio(server);
 
-server.listen(2000, function() {
-	console.log("Listening on port 2000");
+server.listen(port, function() {
+	console.log("Listening on port "+port);
 });
 
 server.on('error', err => {
-	console.log("Server error");
+	console.log("Server error.");
 });
 
 var SOCKET_LIST = {};
