@@ -1,0 +1,40 @@
+<html>
+
+<head>
+	<title>Welcome to Exemplia!</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+
+<body>
+	<table height="100%" width="100%">
+		
+		<tr height="100">
+			<th colspan="2">Exemplia</th>
+		</tr>
+
+		<tr>
+			<td valign="top">
+				<ul id="chat" style="overflow:auto; width: 40em"></ul>
+			</td>
+			<td valign="top" width="150">
+				<div>In this game, you fight monsters.  For example...</div>
+			</td>
+		</tr>
+	
+		<tr height="90">
+			<td>
+				<input type="text" id="chatter"></input>
+				<button onclick="chatMessage();">Chat</button>
+			</td>
+			<td></td>
+		</tr>
+
+	</table>
+	
+
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script src="js/client.js"></script>
+	
+</body>
+
+</html>

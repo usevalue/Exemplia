@@ -4,14 +4,12 @@
   "description": "A great game!",
   "main": "server.js",
   "dependencies": {
-    "ejs": "^3.1.5",
     "express": "^4.17.1",
-    "nodemon": "^2.0.4",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {},
   "scripts": {
-    "devStart": "nodemon server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "James",
   "license": "ISC"
