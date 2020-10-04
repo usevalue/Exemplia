@@ -2,7 +2,7 @@
 
 <head>
 	<title>Welcome to Exemplia!</title>
-	<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+	<%- include('header.ejs'); %>
 </head>
 
 <body>
@@ -31,10 +31,12 @@
 
 	</table>
 	
-
+	<script>
+	var userid = <%= userID %>;
+	</script>
 	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-	<script src="js/client.js"></script>
-	
+	<script src="js/game.js"></script>
+	<%- include('navbar.ejs'); %>
 </body>
 
 </html>
