@@ -3,12 +3,14 @@
 <body>
     <h3>Register a new account.</h3>
     <p>Please note that this is an experimental site.  YOUR PASSWORD IS NOT SECURE at this time, and your account data are only stored in memory, so do not be shocked if they no longer exist next time you visit.  This is subject to change.</p>
-    <form action="/register" method="POST">
+    <form action="/register" method="post">
         <div>
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required /><br/>
+            <label for="email">E-mail address</label>
+            <input type="text" id="email" name="email" required /><br/>
             <label for="password">Password</label>
-            <input type="text" id="password" name="password" required /><br/>
+            <input type="password" id="password" name="password" required /><br/>
             <button type="submit">Register</button>
         </div>
     </form>

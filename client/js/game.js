@@ -1,5 +1,6 @@
 const sock = io();
-sock.emit('serverjoin',userid);
+
+sock.emit('serverjoin', playername);
 
 var chatter = document.getElementById('chatter');
 var chat = document.getElementById('chat');
