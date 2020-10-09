@@ -4,7 +4,9 @@
   "description": "A great game!",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
+    "brcypt": "^1.0.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",

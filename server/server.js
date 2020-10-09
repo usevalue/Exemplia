@@ -7,7 +7,7 @@ const render = require('ejs');
 const http = require('http');
 const socketio = require('socket.io');
 const mongo = require('mongodb');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 
 // Server
@@ -38,6 +38,8 @@ app.use(session({
 	saveUninitialized: false,
 	name: 'exemplia'
 }));
+
+if(!process.env.SECRET) console.log("Using default secret.  Set envirionmental variables!");
 
 app.set('view engine', 'ejs');
 app.set('views', clientPath+'/views')
@@ -78,22 +80,26 @@ app.get('/logout', (req,res) => {
 app.post('/login', async (req, res) => {
 	var {username, password} = req.body;
 	if(username&&password) {
-		MongoClient.connect(dburl, function(err, db) {
+		MongoClient.connect(dburl, async function(err, db) {
 			database = db.db(dbname);
-			database.collection('users').findOne({name: username}, function(err, result) {
+			database.collection('users').findOne({name: username}, async function(err, result) {
+				if(err) throw err;
 				if(result) {
-					if(result.password==password) {
-						req.session.authenticated = true;
-						req.session.userid = result._id;
-						req.session.name = result.name;
-						res.redirect('/');
+					try {
+						const passMatch = await bcrypt.compare(password, result.password);
+						if(passMatch) {
+							req.session.authenticated = true;
+							req.session.userid = result._id;
+							req.session.name = result.name;
+							res.redirect('/');
+						}
+						else res.redirect('/login');
 					}
-					else res.redirect('/login');
+					catch {
+						res.status(500).send();
+					}
 				}
-				else {
-					//  No one by that name
-					res.redirect('/login');
-				}
+				else res.redirect('/login');
 				db.close();
 			});
 		});
@@ -101,30 +107,36 @@ app.post('/login', async (req, res) => {
 	else res.redirect('/login');
 });
 
-app.post('/register', async function(req, res) {
-	const user = {
-		name: req.body.name,
-		email: req.body.email,
-		password: req.body.password
-	};
-	MongoClient.connect(dburl, function(er, db){
-		if(er) throw er;
-		var database = db.db(dbname);
-		database.collection('users').findOne({name: user.name}, function(err, result) {
-			if(err) throw (err);
-			if(result) res.redirect('/register');
-			else {
-				database.collection('users').insertOne(user, function(error, result) {
-					if(error) {
-						throw error;
+app.post('/register', function(req, res) {
+	if(req.body.password&&req.body.name) {
+		MongoClient.connect(dburl, function(er, db){
+			if(er) throw er;
+			var database = db.db(dbname);
+			database.collection('users').findOne({name: req.body.name}, async function(err, result) {
+				if(err) throw (err);
+				if(result) res.redirect('/register');
+				else {
+					try {
+						const hashedpass = await bcrypt.hash(req.body.password, 10);
+						const user = {
+							name: req.body.name,
+							email: req.body.email,
+							password: hashedpass
+						};
+						database.collection('users').insertOne(user, function(error, result) {
+							if(error) {
+								throw error;
+							}
+							console.log(user.name+' registered.');
+							res.redirect('/login');
+						});
 					}
-					console.log(user.name+' registered.');
-					res.redirect('/login');
-				});
-			}
-			db.close();
-		});
-	});
+					catch (e) {console.log(e)}
+				}
+				db.close();
+			});
+	});}
+	else res.redirect('/register');
 });
 
 app.post('/logout', (req,res) => {
