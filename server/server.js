@@ -172,7 +172,7 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on('chat_message',function(text){
-		console.log('Chat message: '+text);
+		console.log(username+': '+text);
 		var message = (username+' says, "'+text+'"');
 		for(var i in SOCKET_LIST) {
 			var sock = SOCKET_LIST[i];
