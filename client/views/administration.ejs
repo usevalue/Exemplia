@@ -1,0 +1,254 @@
+<html>
+
+<head>
+    <title>GameMaster's section</title>
+
+    <style>
+        #adminPlayerList {border-style:none}
+    </style>
+
+    <%- include('header.ejs'); %>
+</head>
+
+<body>
+    <%- include('navbar.ejs'); %>
+    <div style="position: absolute; top: 5%; left: 2%; right: 4%">
+        <h1>Place List</h1>
+        <table id="place_list" border="1" cellspacing="0">
+            <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Routes</th>
+                <th>Action</th>
+            </tr>
+            <tr id="place_entry">
+                <td><input type="text" id="placename"></input></td>
+                <td>-</td>
+                <td><input type="text" id="placedescription"></input></td>
+                <td>-</td>
+                <td><button id="makePlace">New Place</button></td>
+            </tr>
+        </table>
+
+        <h1>Route List</h1>
+        <table id="route_list" border="1" cellspacing="0">
+            <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr id="route_entry">
+                <td><input type="text" id="routename"></input></td>
+                <td>-</td>
+                <td><input type="text" id="routedescription"></input></td>
+                <td><button id="makeRoute">New Route</button></td>
+            </tr>
+        </table>
+    </div>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+            var routes = {};
+            var places = {};
+
+            $('#makePlace').click(function(){
+                var newPlace = {
+                    name: $('#placename').val(),
+                    description: $('#placedescription').val(),
+                }
+                $.ajax({
+                    url: 'makePlace',
+                    type: 'POST',
+                    data: newPlace,
+                    success: function(data) {
+                        if(data=='_ERROR_') return;
+                        else {
+                            $('#placename, #placedescription').val('');
+                            newPlace._id = data;
+                            addPlace(newPlace);
+                        }
+                    }
+                });
+            });
+
+            $('#makeRoute').click(function(){
+                var newRoute = {
+                    name: $('#routename').val(),
+                    description: $('#routedescription').val()
+                }
+                $.ajax({
+                    url: 'makeRoute',
+                    type: 'POST',
+                    data: newRoute,
+                    success: function(data) {
+                        if(data=='_ERROR_') return;
+                        else {
+                            $('#routename, #routedescription').val('');
+                            newRoute._id = data;
+                            addRoute(newRoute);
+                        }
+                    }
+                });
+            });
+            
+            
+
+            function addPlace(place) {
+                let entryFlag = 'entry_'+place._id;
+                let toInsert = "<tr id='"+entryFlag+"'>";
+                toInsert = toInsert + "<td name='placename'>"+place.name+"</td>";
+                toInsert = toInsert + "<td name='id'>"+place._id+"</td>";
+                toInsert = toInsert + "<td name='description'>"+place.description+"</td>";
+                toInsert = toInsert + "<td name='routes'>";
+                toInsert = toInsert + routeList(place);
+                toInsert = toInsert + "<input type='text' value='Enter route id' style='display: none'></input>";
+                toInsert = toInsert + "<button name='addconnection'>+</button></td>";
+                toInsert = toInsert + "<td name='edit'><button name='edit'>Edit</button><button name='delete'>Delete</button></td></tr>";
+
+                $('#place_entry').before(toInsert);
+
+                $("#"+entryFlag+" > td[name='edit'] > button[name='edit']").click(function() {
+                    console.log('TODO: editing '+entryFlag);
+                });
+
+                $("#"+entryFlag+" > td[name='edit'] > button[name='delete']").click(function() {
+                    $.ajax({
+                        action: 'GET',
+                        url: 'admindelete', 
+                        data: {
+                            id: place._id,
+                            type: 'place'
+                        },
+                        success: function(data) {
+                            if(data=='_SUCCESS_') $("#"+entryFlag).remove();
+                        }
+                    });
+                });
+
+                $("#"+entryFlag+" > td[name='routes'] > button[name='addconnection']").click(()=> {
+                    $("#"+entryFlag+" > td[name='routes'] > input").show();
+                    $("#"+entryFlag+" > td[name='routes'] > button[name='addconnection']").html('Confirm');
+                    if($("#"+entryFlag+" > td[name='routes'] > input").val()!='Enter route id') {
+                        $.ajax({
+                            action: 'GET',
+                            url: 'connectplace',
+                            data: {
+                                place: place._id,
+                                route: $("#"+entryFlag+" > td[name='routes'] > input").val()
+                            },
+                            success: function(data) {
+                                if(data=="_ERROR_") {
+                                    alert("No route found with that id.");
+                                }
+                                else {
+                                    console.log(data);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                $("#"+entryFlag+" > td[name='routes'] > button[name='unlink']").click((click)=>{
+                    $.ajax({
+                        action: 'GET',
+                        url: 'unlink',
+                        data: {
+                            place: place._id,
+                            route: click.target.value
+                        },
+                        success: function(data) {
+                            console.log(data);
+                        }
+                    });
+                });
+            }
+
+            function addRoute(route) {
+                let entryFlag = 'entry_'+route._id;
+                let toInsert = "<tr id='"+entryFlag+"'>";
+                toInsert = toInsert + "<td name='name'>" + route.name + "</td>";
+                toInsert = toInsert + "<td name='id'>"+route._id+"</td>";
+                toInsert = toInsert + "<td>" + route.description + "</td>";
+                toInsert = toInsert + "<td name='edit'><button>Edit</button><button name='delete'>Delete</button></td></tr>";
+                $('#route_entry').before(toInsert);
+                $("#"+entryFlag+" > td[name='edit'] > button[name='delete']").click(function() {
+                    $.ajax({
+                        action: 'GET',
+                        url: 'admindelete', 
+                        data: {
+                            id: route._id,
+                            type: 'route'
+                        },
+                        success: function(data) {
+                            if(data=='_SUCCESS_') $("#"+entryFlag).remove();
+                        }
+                    });
+                });
+            }
+
+            function routeList(place) {
+                var list = "";
+                for(var r in place.routes) {
+                    let routeid = place.routes[r]
+                    let routename = $("#entry_"+routeid+" > td[name='name']").html();
+                    list = list + routename + "<button name='unlink' value='"+routeid+"'>-</button>, ";
+                }
+                return list;
+            }
+
+            function databaseDelete(id) {
+                $.ajax({
+                    url: 'admindelete',
+                    type: 'DELETE',
+                    data: id,
+                    success: function(data) {
+                        console.log(data);
+                    }
+                });
+            }
+
+            function renderRoutes() {
+                for(let i in routes) {
+                    var r = routes[i];
+                    addRoute(r, r._id);
+                }
+            }
+
+
+            // First-time loading
+            $.ajax({
+                url: 'getroutes',
+                type: 'GET',
+                success: function(data) {
+                        routes=data;
+                        renderRoutes();
+                    }
+            });
+
+            function renderPlaces() {
+                for(let i in places) {
+                    var p = places[i];
+                    addPlace(p, p._id);
+                }
+            }
+
+            $.ajax({
+                url: 'getplaces',
+                type: 'GET',
+                success: function(data) {
+                    places=data;
+                    renderPlaces();
+                }
+            });
+
+            // Fill route lists
+        })
+
+    </script>
+</body>
+</html>

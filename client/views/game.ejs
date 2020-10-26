@@ -6,32 +6,121 @@
 </head>
 
 <body>
-	<h1 id="header">Exemplia</h1>
+	<div id="header"><h1>Exemplia</h1></div>
 
-	<div class="content"><ul id="chat"></ul></div>
-	<div id="chatinterface">
-		<input type="text" id="chatter"></input>
-		<button onclick='chatMessage();'>Chat</button>
+	<div id="place_display"></div>
+
+	<div id="content">
+		<ul id="chat"></ul>
 	</div>
 
-	<div id="controller">
-		<h3 align="center">Player name</h3>
-		Current character:
-		<select id="characterpicker">
-			<!-- Load player characters as list items-->
-			<option value="newcharacter">Create a new character</option>
-		</select>&nbsp;&nbsp;
-		<button onclick='chooseCharacter();'>Go</button>
-		<button onclick="for(let i in displayedCharacter) writeMessage(i+': '+displayedCharacter[i]);">?</button><br/><br/>
+	<div id="chatinterface">
+		<input type="text" id="chatter"></input>
+		<button id="chatbutton">Chat</button>
+	</div>
 
+
+	<div id="controller">
+
+		<h3 align="center">Welcome, <%= playername %></h3>
+
+		SELECT CHARACTER:
+			<select id="characterselector"></select>&nbsp;&nbsp;
+			<button id="characterpicker">Go</button>
+
+			<hr />
 		<div id="character_window" style="display:none">
-			<%- include('descriptiveBlock.ejs') %>
-			<%- include('attributeBlock.ejs') %>
-			<%- include('skillBlock.ejs') %>
+
+			<div id="newDescriptionBlock" style="display:none">
+				CHARACTER CREATOR<br/>
+				Full name:<input type="text" required="true" id="new_fullName"></input><br/>
+				Shortened name:<input type="text" required="true" id="new_shortName"></input><br/>
+				Description:<input type="text" id="new_description"></input><br/>
+				<button id="submitcharname">Next</button>
+			</div>
+			
+			<div id="descriptionBlock">
+				<span id="characterFullName"></span> (<span id="characterShortName"></span>)<br/>
+				Description: <span id="characterDescription"></span><br/><br/>
+			</div>
+
+
+			<div id="characterAttributeBlock">
+				<span class="attributeAdjusters">
+					<button name="attributedecreaser" value="constitution">-</button>/
+					<button name="attributeincreaser" value="constitution">+</button>&nbsp;&nbsp;
+				</span>
+				<span id="character_constitution"></span> Constitution<br/>
+
+				<span class="attributeAdjusters">
+					<button name="attributedecreaser" value="agility">-</button>/
+					<button name="attributeincreaser" value="agility">+</button>&nbsp;&nbsp;
+				</span>
+				<span id="character_agility"></span> Agility<br/>
+
+				<span class="attributeAdjusters">
+					<button name="attributedecreaser" value="perception">-</button>/
+					<button name="attributeincreaser" value="perception">+</button>&nbsp;&nbsp;
+				</span>
+				<span id="character_perception"></span> Perception<br/>
+
+				<span class="attributeAdjusters">
+					<button name="attributedecreaser" value="learning">-</button>/
+					<button name="attributeincreaser" value="learning">+</button>&nbsp;&nbsp;
+				</span>
+				<span id="character_learning"></span> Learning<br/>
+
+				<span class="attributeAdjusters">
+					<button name="attributedecreaser" value="status">-</button>/
+					<button name="attributeincreaser" value="status">+</button>&nbsp;&nbsp;
+				</span>
+				<span id="character_status"></span> Status<br/>
+
+				<span class="attributeAdjusters"><br/>You have <span id="character_attributePoints"></span> points to spend on abilities.<br/><br/>
+
+				<button class="attributeAdjusters" id="savenewcharacter">Done.</button></span>
+			</div>
 		</div>
+
+		<hr />
+
 		<div id="action_window">
 
+			<div id="action_display">
+				<div id="character_actions" style="display:none">
+					<b>Character actions</b><br/>
+					<ul>
+						<li><a href="#" class="actionlink" name="attack">Attack!</a></li>
+						<li><a href="#" class="actionlink" name="search">Search the area</a></li>
+						<li><a href="#" class="actionlink" name="rest">Rest</a></li>
+					</ul>
+				</div>
+
+				<div id="equip_actions" style="display:none">
+					<b>Character equipment</b><br/>
+					<b>Inventory:</b> (list)
+				</div>
+
+				<div id="manage_actions" style="display:none">
+					<b style="text-align: center">Management options</b><br/>
+					<ul>
+						<li><a href="#" class="actionlink" name="deletecharacter">Delete character</a></li>
+						<li><a href="#" class="actionlink" name="changename">Change character name</a></li>
+						<li><a href="#" class="actionlink" name="editdescription">Edit character description</a></li>
+					</ul>
+				</div>
+
+			</div>
+
+			<hr />
+
+			<div id="action_options">
+				<button name="character">ACTIONS</button>
+				<button name="equip">EQUIP</button>
+				<button name="manage">MANAGE</button>
+			</div>
 		</div>
+
 	</div>
 	
 	<script>

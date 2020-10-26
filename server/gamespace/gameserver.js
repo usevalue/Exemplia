@@ -1,10 +1,5 @@
 const socketio = require('socket.io');
-const mongo = require('mongodb');
-const mongoose = require('../server').mongoose;
-const dburl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/exemplia';
-
 const Player = require('./models').Player;
-const PlayerCharacter = require('./models').PlayerCharacter;
 
 
 class GameServer {
@@ -37,13 +32,14 @@ class GameServer {
                         socket.player = result;
                         console.log(socket.player.name+' has joined the game.');
                         socket.emit('message', 'Welcome to Exemplia.');
+                        socket.emit('characterSet', socket.player.characters);
                     }
                 });
             });
         
-            socket.on('chat_message',function(text){
-                console.log(socket.player.name+': '+text);
-                let message = (socket.player.name+' says, "'+text+'"');
+            socket.on('chat_message',function(data){
+                console.log(data.speaker+': '+data.text);
+                let message = (data.speaker+' says, "'+data.text+'"');
                 tellAll(message);
             });
         
@@ -56,9 +52,16 @@ class GameServer {
             });
 
             socket.on('saveCharacter', (char) => {
-                var pc = new PlayerCharacter(char);
-                socket.player.characters.push(char);
-                socket.player.save();
+                try {
+                    socket.player.characters.push(char);
+                    socket.player.save();
+                    socket.emit('Character saved!');
+                }
+                catch (error) {
+                    console.log("Error saving character:");
+                    console.log(error);
+                    socket.emit('message', 'Error saving character.');
+                }
             })
         });
 

@@ -1,5 +1,8 @@
 <html>
-
+<head>
+    <title>Register</title>
+    <%- include('header.ejs') %>
+</head>
 <body>
     <h3>Register a new account.</h3>
     <p>User data is stored to <a href="">MongoDB</a>.  Passwords are stored in encrypted form, never plaintext.</p>
@@ -15,5 +18,6 @@
         </div>
     </form>
     <p>Already registered?  <a href="login">Log in!</a></p>
+    <%- include('navbar.ejs') %>
 </body>
 </html>

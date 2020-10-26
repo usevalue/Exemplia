@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
-const { stringify } = require('uuid');
 
+//  CHARACTERS
 
 const attributeSchema = new mongoose.Schema({
     constitution: {
@@ -41,13 +41,14 @@ const characterSchema = new mongoose.Schema({
     attributes: {
         type: attributeSchema,
         required: true
+    },
+    owner: {
+        type: String,
+        default: "server"
     }
 });
 
-const PlayerCharacter = mongoose.model('Character', characterSchema, 'Characters');
-
-
-// Meta-game.
+// PLAYERS
 
 const playerSchema = new mongoose.Schema({
     name: {
@@ -59,11 +60,50 @@ const playerSchema = new mongoose.Schema({
         required: true
     },
     email: String,
-    characters: [characterSchema],
+    isAdmin: {
+        type: Boolean,
+        default: false
+    }
 
 });
 
 
-const Player = mongoose.model('Player', playerSchema, 'Players');
+// LOCATIONS
 
-module.exports = {Player, PlayerCharacter};
+const connectionSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        default: 'A path',
+        required: true
+    },
+    description: {
+        type: String
+    },
+    verbal: {
+        type: String,
+        default: 'take the path'
+    }
+});
+
+
+const placeSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    routes: {
+        type: [String]
+    }
+});
+
+const Route = mongoose.model("Route", connectionSchema, "Routes");
+const Character = mongoose.model("Character", characterSchema, "Characters")
+const Player = mongoose.model('Player', playerSchema, 'Players');
+const Place = mongoose.model("Place", placeSchema, "Places");
+
+module.exports = {Player, Place, Route, Character};

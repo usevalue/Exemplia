@@ -1,6 +1,28 @@
-#navbar {background-color: antiquewhite; width: 200px; position:absolute; top: 1em; right: 2em}
+/* SITE-WIDE */
 
+#header {
+    position: absolute; left: 8%; top: 3%
+}
+
+#navbar {background-color: antiquewhite; position:absolute; top: 1em; right: 2em}
+
+#content {
+    position: absolute; overflow: auto; top: 12%; bottom: 10%; left: 8%; right: 30%
+}
+
+button {
+    padding: 0px 3px;
+    margin: 0px 0px;
+    border-radius: 1px
+}
+
+
+/* IN-GAME */
+
+/* Chat feed */
 #chat {list-style: none; padding-left: 2px}
+
+#chat > li > h3 {color: rgb(80, 0, 0)}
 
 #attributeList {list-style: none; padding-left: 2px}
 
@@ -8,18 +30,14 @@
     position: absolute; top: 92%; left: 8%; left: 8%; right: 30%;
 }
 
+
+/* Character display */
+
 #controller {
-    position: absolute; overflow: auto; top: 12%; left: 70%; right: 1%; bottom: 10%;
+    position: absolute; overflow: auto; top: 4%; left: 70%; right: 1%; bottom: 1%;
+    padding-top: 20px;
     background-color: #DDDDDD;
     padding-left: 6px; padding-right: 2px; padding-top: 1px;
-}
-
-#header {
-    position: absolute; left: 8%; top: 3%
-}
-
-.content {
-    position: absolute; overflow: auto; top: 12%; bottom: 10%; left: 8%; right: 30%
 }
 
 .interface_element {
@@ -28,4 +46,20 @@
 
 .descriptionBlock {
     padding-left: 4px; padding-right: 4px
+}
+
+#action_selector {
+    border-color: black; border-style: solid; border-width: 1px
+}
+
+#action_options {
+    text-align: center;
+}
+
+.actionlink {
+    color: blue
+}
+
+.actionlink:hover {
+    color:aquamarine
 }
