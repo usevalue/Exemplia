@@ -45,6 +45,10 @@ const characterSchema = new mongoose.Schema({
     owner: {
         type: String,
         default: "server"
+    },
+    location: {
+        type: String,
+        default: "Frog Castle"
     }
 });
 
@@ -73,8 +77,8 @@ const playerSchema = new mongoose.Schema({
 const connectionSchema = new mongoose.Schema({
     name: {
         type: String,
-        default: 'A path',
-        required: true
+        required: true,
+        unique: true
     },
     description: {
         type: String
@@ -97,7 +101,7 @@ const placeSchema = new mongoose.Schema({
         required: true
     },
     routes: {
-        type: [String]
+        type: [ObjectId]
     }
 });
 

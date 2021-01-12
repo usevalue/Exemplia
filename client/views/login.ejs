@@ -4,19 +4,28 @@
         <%- include('header.ejs') %>
     </head>
     <body>
-        <h1>Log in to play <i>Exemplia</i></h1>
+        <h1 id="header">Log in to play <i>Exemplia</i></h1>
+        <div id="content">
+        
         <form action="login" method="post">
-        <div>
-            <label for="username">Name</label>
-            <input type="text" id="username" name="username" required /><br/>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required /><br/>
-            <button type="submit">Log in</button>
+            <table border="0" cellspacing="3" style="font-weight: bold">
+                <tr>
+                    <td align="right"><label for="username">Name</label></td>
+                    <td><input type="text" id="username" name="username" required /></td>
+                </tr>
+                <tr>
+                    <td align="right"><label for="password">Password</label></td>
+                    <td><input type="password" id="password" name="password" required /></td>
+                </tr>
+                <tr>
+                    <td align="center" colspan="2"><button type="submit">Log in</button></td>
+                </tr>
+            </table>
+        </form><br/>
+        <p>You have to be logged in to play Exemplia.  If you don't yet have an account, you'll have to <a href="register">register</a> one.</p>
         </div>
-        </form>
+
 
         <%- include('navbar.ejs'); %>
-        <p>You have to be logged in to play Exemplia.  If you don't yet have an account, you'll have to <a href="register">register</a> one.</p>
-        
     </body>
 </html>

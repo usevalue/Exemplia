@@ -1,23 +1,63 @@
-const sock = io();
-
-sock.emit('serverjoin', playername);
-sock.on('message', function(data){writeMessage(data);});
-
-
-const writeMessage = function(text) {
-    $('#chat').append('<li>'+text+'</li>');
-}
 
 // GAME RULES
 
-const traitLevels = ['Terrible', 'Poor', 'Mediocre', 'Fair', 'Good', 'Great', 'Superb']
-
 $(function() {
+
+    const sock = io();
+    sock.emit('serverjoin', playername);
+    sock.on('message', function(data){writeMessage(data);});
+
+    sock.on('location', (data)=>{
+        console.log('loading location');
+        displayedLocation = data;
+        $("#place_display > span[name='name']").html(displayedLocation.name);
+        $("#place_display > div[name='description']").html(displayedLocation.description);
+    });
+
+    sock.on('routeTree', (data) => {
+        var textToAdd = "";
+        for(let i in data) {
+            let route = data[i];
+            let p = "";
+            for(let n in route) {
+                if(route[n]!=displayedLocation.name) {
+                    p = p+ "<span class='travelspan'>"+route[n]+"</span>";
+                    if(n==route.length-1) p = p+".";
+                    else if (n==route.length-2) p = p+" or ";
+                    else p = p+", ";
+                }
+            }
+            textToAdd = textToAdd + "<li>You can take "+i+" to "+p+"</li>";
+        }
+        $("#place_display > ul[name='travel']").html(textToAdd);
+        $(".travelspan").each((i, e)=>{
+            $(e).css('color','blue');
+            $(e).css('cursor','pointer');
+            $(e).on('click', ()=>{
+                var travelRequest = {
+                    destination: $(e).html(),
+                    traveller: displayedCharacter._id
+                }
+                sock.emit('travelto', travelRequest, (reply) =>{
+                    displayedCharacter.location = reply;
+                    joinChannel(displayedCharacter);
+                });
+            });
+        });
+    });
+
+    const writeMessage = function(text) {
+        $('#chat').append('<li>'+text+'</li>');
+        $('#content').scrollTop($('#content').scrollTop()+1000);
+    }
+
+    // Get Characters
 
     var characterSet = [];
     var displayedCharacter = {};
-    
-    // Get characters
+    var displayedLocation = {};
+
+    const traitLevels = ['Terrible', 'Poor', 'Mediocre', 'Fair', 'Good', 'Great', 'Superb']
     const getCharacters = () => {
             $.ajax({
             url: 'play/getcharacters',
@@ -52,14 +92,17 @@ $(function() {
     $('#chatbutton').on('click', chatMessage);
 
     function chatMessage() {
+        if($('#chatter').val() == "") return;
         if(displayedCharacter._id) {
             console.log(displayedCharacter);
             let name = displayedCharacter.shortName;
             var message = {
                 'speaker': name,
-                'text': $('#chatter').val()
+                'text': $('#chatter').val(),
+                'location': displayedLocation.name
             };
             $('#chatter').val("");
+            writeMessage(message.speaker+' says, "'+message.text+'"');
             sock.emit('chat_message', message);
         }
         else {
@@ -85,6 +128,13 @@ $(function() {
         renderDescription();
         renderAttributes(false);
         writeMessage("<i>You are now chatting as "+displayedCharacter.shortName+".</i>");
+        joinChannel(displayedCharacter);
+    }
+
+    const joinChannel = function(character) {
+        if(character) sock.emit('joinchannel', character, (data) => {
+            console.log(data);
+        });
     }
     
     function renderDescription() {
@@ -139,7 +189,6 @@ $(function() {
             writeMessage('<h3>You have no more attribute points.  Lower some attributes if you want more.</h3>');
             return;
         }
-
         let currentVal = displayedCharacter.attributes[click.target.value];
         if(currentVal==traitLevels.length-1) {
             writeMessage('<h3>'+click.target.value+' is at maximum!</h3>');

@@ -1,7 +1,7 @@
 /* SITE-WIDE */
 
 #header {
-    position: absolute; left: 8%; top: 3%
+    position: absolute; left: 4%; top: 1%
 }
 
 #navbar {background-color: antiquewhite; position:absolute; top: 1em; right: 2em}
@@ -18,6 +18,10 @@ button {
 
 
 /* IN-GAME */
+
+#place_display {
+    position: absolute; overflow: auto; top: 12%; right: 31%; left: 8%; bottom: 51%
+}
 
 /* Chat feed */
 #chat {list-style: none; padding-left: 2px}
