@@ -48,7 +48,7 @@ const characterSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        default: "Frog Castle"
+        default: process.env.START_LOCATION || "Frog Castle"
     }
 });
 
