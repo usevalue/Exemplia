@@ -1,7 +1,7 @@
 {
   "name": "exemplia",
   "version": "1.0.0",
-  "description": "A great game!",
+  "description": "tbh I was just practicing",
   "main": "server.js",
   "dependencies": {
     "bcrypt": "^5.0.0",
