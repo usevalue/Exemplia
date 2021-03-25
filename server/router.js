@@ -188,15 +188,14 @@ requestRouter.post('/logout', (req,res) => {
 
 function adminOnly(req, res, next) {
 	if(!req.session.authenticated) res.redirect('/login');
-        else next();
-	//	else Player.findOne({_id: req.session.userid}, async(err, result) =>
-//	{
-//		if(err) res.redirect('/');
-//		else {
-//			if(result.isAdmin) next();
-//			else res.redirect('/');
-//		}
-//	})
+ 	else Player.findOne({_id: req.session.userid}, async(err, result) =>
+	{
+		if(err) res.redirect('/');
+		else {
+			if(result.isAdmin) next();
+			else res.redirect('/');
+		}
+	})
 }
 
 requestRouter.get('/admin', adminOnly, (req, res) => {
